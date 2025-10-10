@@ -1,0 +1,21 @@
+{
+    "predef": true,
+    "scripts": [
+        {
+            "name": "def",
+            "template": "default",
+            "ask": {
+                "name": true,
+                "packages": true
+            }
+        },
+        {
+            "name": "add",
+            "template": "second",
+            "ask": {
+                "name": false,
+                "packages": true
+            }
+        }
+    ]
+}
