@@ -6,7 +6,7 @@
             "template": "default",
             "ask": {
                 "name": true,
-                "packages": false
+                "packages": true
             }
         },
         {

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"scripter/internal/commands"
 	"scripter/internal/config"
 	"scripter/internal/mainconfig"
-	"scripter/internal/script"
 )
 
 func main() {
@@ -36,43 +36,22 @@ func main() {
 		return
 	}
 
-	if args[0] == "run" {
-		if len(args) != 2 {
-			fmt.Println("Expected script name after run")
+	switch (args[0]) {
+	case "run":
+		err := commands.CommandRun(args, config, mainConfig)
+		if err != nil {
+			fmt.Println("Failed to run 'run':", err)
 			return
 		}
-
-		cmdName := args[1]
-		var src *script.Script = nil
-
-		for _, script := range config.Scripts {
-			if cmdName == script.Name {
-				src = &script
-			}
-		}
-
-		if src == nil {
-			fmt.Printf("Script \"%s\" doesn't exist", cmdName)
+		fmt.Println("Done")
+	case "make":
+		err := commands.CommandMake(args, mainConfig)
+		if err != nil {
+			fmt.Println("Failed to run 'make':", err)
 			return
 		}
-
-		if len(args) == 3 {
-			err := src.ExecuteSrcipt(mainConfig, args[2])
-			if err != nil {
-				fmt.Println("Failed to execute script: ", err)
-				return
-			}
-			fmt.Println("Done")
-		} else {
-			err := src.ExecuteSrcipt(mainConfig, ".")
-			if err != nil {
-				fmt.Println("Failed to execute script: ", err)
-				return
-			}
-			fmt.Println("Done")
-		}
-	} else {
+		fmt.Println("Done")
+	default:
 		fmt.Printf("Unknown command: %s\n", args[0])
-		return
 	}
 }

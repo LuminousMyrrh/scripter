@@ -50,7 +50,7 @@ func copyFile(src string, dest string) error {
 	return nil
 }
 
-func CopyFiles(dirPath string, destPath string) error {
+func CopyDir(dirPath string, destPath string) error {
 	dir, err := os.Open(dirPath)
 	if err != nil {
 		return err
@@ -61,10 +61,8 @@ func CopyFiles(dirPath string, destPath string) error {
 	}
 	for _, entity := range dirFiles {
 		entityPath := dirPath + "/" + entity.Name()
-		fmt.Println(entityPath)
-		fmt.Println(destPath)
 		if entity.Type().IsDir() {
-			CopyFiles(entityPath, destPath)
+			CopyDir(entityPath, destPath)
 		} else {
 			err := copyFile(entityPath, destPath + "/" + entity.Name())
 			if err != nil {
@@ -77,7 +75,7 @@ func CopyFiles(dirPath string, destPath string) error {
 }
 
 func CopyTemplate(template string, dest string) error {
-	err := CopyFiles(template, dest)
+	err := CopyDir(template, dest)
 	if err != nil {
 		return err
 	}
