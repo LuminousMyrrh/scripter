@@ -1,4 +1,4 @@
-# Scripter 0.2
+# Scripter
 A simple CLI tool for those who want to easily setup their microservices!
 Scripter allows you to define project templates and use them later.
 With *script.json* in your working directory you can define scripts which are uses your templates.
@@ -28,3 +28,4 @@ make
 |    0.1    | basic impl   |
 |    0.2    | 'run' command|
 |    0.3    | 'make' command|
+|    0.4    | 'rm' command|
