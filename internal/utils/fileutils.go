@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 )
 
 func IsDirExist(path string) (bool, error) {
@@ -62,7 +63,11 @@ func CopyDir(dirPath string, destPath string) error {
 	for _, entity := range dirFiles {
 		entityPath := dirPath + "/" + entity.Name()
 		if entity.Type().IsDir() {
-			CopyDir(entityPath, destPath)
+			if !strings.HasPrefix(entity.Name(), ".") {
+				newDir := destPath + "/" + entity.Name()
+				os.Mkdir(newDir, 0755)
+				CopyDir(entityPath, newDir)
+			}
 		} else {
 			err := copyFile(entityPath, destPath + "/" + entity.Name())
 			if err != nil {

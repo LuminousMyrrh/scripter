@@ -2,17 +2,20 @@ package mainconfig
 
 import (
 	"encoding/json"
-	"log"
 	"os"
-	"scripter/internal/utils"
 )
 
 type MainConfig struct {
-	Templates []string
+	Templates []string `json:"templates"`
+	ConfigPath string `json:"-"`
 }
 
 func NewMainConfig() *MainConfig {
 	return &MainConfig{}
+}
+
+type templatesJSON struct {
+	Templates []string `json:"templates"`
 }
 
 func (mainCfg *MainConfig) readMainConfig(configFile string, xdgConfigDir string) error {
@@ -21,44 +24,20 @@ func (mainCfg *MainConfig) readMainConfig(configFile string, xdgConfigDir string
 		return err
 	}
 
-	if err := json.Unmarshal(configData, &mainCfg); err != nil {
+	var templates templatesJSON
+
+	if err := json.Unmarshal(configData, &templates); err != nil {
 		return err
 	}
 
 	templateDir := xdgConfigDir + "/scripter" + "/templates/"
-
-	for i, temp := range mainCfg.Templates {
-		mainCfg.Templates[i] = templateDir + temp
-	}
+	
+	//validate templates
+	mainCfg.validateTemplates(templates.Templates, templateDir)
 
 	return nil
 }
 
-func (mainCfg *MainConfig) CheckMainConfig() error {
-	xdgConfigDir := os.Getenv("XDG_CONFIG_HOME")
-	if len(xdgConfigDir) == 0 {
-		xdgConfigDir = os.Getenv("HOME") + "/.config"
-	}
-	if exist, err := utils.IsDirExist(xdgConfigDir + "/scripter"); err != nil {
-		return err
-	} else if !exist {
-		log.Println("Initializing main config dir")
-		InitMainConfigPath(xdgConfigDir)
-	}
-	err := mainCfg.readMainConfig(xdgConfigDir + "/scripter/config.json",
-		xdgConfigDir)
-
-	return err
+func (m *MainConfig) AddTemplate(tempName string) {
+	m.Templates = append(m.Templates, tempName)
 }
-
-func InitMainConfigPath(xdgConfigDir string) {
-	if len(xdgConfigDir) == 0 {
-		xdgConfigDir = "~/.config"
-	}
-
-	configPath := xdgConfigDir + "/scripter/"
-	os.Mkdir(configPath, 0755)
-	os.Mkdir(configPath + "templates", 0755)
-	os.Create(configPath + "config.json")
-}
-

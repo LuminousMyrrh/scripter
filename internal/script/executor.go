@@ -56,7 +56,7 @@ func (script Script) ExecuteSrcipt(mainCfg *mainconfig.MainConfig, destination s
 
 	err = utils.CopyTemplate(templatePath, namePath)
 	if err != nil {
-		return fmt.Errorf("Failed to copy template: ", err)
+		return err
 	}
 
 	return nil

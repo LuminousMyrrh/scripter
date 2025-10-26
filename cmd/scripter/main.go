@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"scripter/internal/commands"
 	"scripter/internal/config"
@@ -11,47 +10,44 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		log.Fatal("usage: scripter run <your command>")
-		return
+		fmt.Println("usage: scripter run <your command>")
+		os.Exit(1)
 	}
 
 	args := os.Args[1:]
 
 	configData, err := os.ReadFile("scripts.json")
 	if err != nil {
-		fmt.Println("Failed to read config file: ", err)
-		return
+		fmt.Println("Failed to read config file:", err)
+		os.Exit(1)
 	}
 
 	mainConfig := mainconfig.NewMainConfig()
-	err = mainConfig.CheckMainConfig()
-	if err != nil {
-		fmt.Println("Failed to check main config: ", err)
-		return
+	if err := mainConfig.CheckMainConfig(); err != nil {
+		fmt.Println("Failed to check main config:", err)
+		os.Exit(1)
 	}
 
-	config, err := config.NewLocalConfig(configData)
+	localConfig, err := config.NewLocalConfig(configData)
 	if err != nil {
-		fmt.Println("Failed to read local config")
-		return
+		fmt.Println("Failed to read local config:", err)
+		os.Exit(1)
 	}
 
-	switch (args[0]) {
+	switch args[0] {
 	case "run":
-		err := commands.CommandRun(args, config, mainConfig)
-		if err != nil {
+		if err := commands.CommandRun(args, localConfig, mainConfig); err != nil {
 			fmt.Println("Failed to run 'run':", err)
-			return
+			os.Exit(1)
 		}
-		fmt.Println("Done")
 	case "make":
-		err := commands.CommandMake(args, mainConfig)
-		if err != nil {
+		if err := commands.CommandMake(args, mainConfig); err != nil {
 			fmt.Println("Failed to run 'make':", err)
-			return
+			os.Exit(1)
 		}
-		fmt.Println("Done")
 	default:
 		fmt.Printf("Unknown command: %s\n", args[0])
+		fmt.Println("usage: scripter run <your command>")
+		os.Exit(1)
 	}
 }
