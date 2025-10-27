@@ -6,8 +6,8 @@ import (
 )
 
 type Config struct {
-	Predef bool
-	Scripts []script.Script
+	Predef bool `json:"predef"`
+	Scripts []script.Script `json:"scripts"`
 }
 
 func NewLocalConfig(configData []byte) (*Config, error) {
