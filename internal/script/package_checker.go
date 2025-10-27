@@ -3,6 +3,7 @@ package script
 import (
 	"fmt"
 	"net/url"
+	"regexp"
 	"scripter/pkg/api"
 	"strings"
 )
@@ -10,10 +11,6 @@ import (
 func CheckPackage(packageName string) (string, error) {
 	if strings.Contains(packageName, "github") {
 		return packageName, nil
-	}
-	// very bad!!!
-	if packageName == "gorm" {
-		return "gorm.io/" + packageName, nil
 	}
 
 	baseUrl := "https://api.github.com/search/repositories"
@@ -31,4 +28,12 @@ func CheckPackage(packageName string) (string, error) {
 	}
 
 	return "github.com/" + name, nil
+}
+
+func GetPackageNameFromErrOutput(input string, re *regexp.Regexp) string {
+    matches := re.FindStringSubmatch(input)
+    if len(matches) > 1 {
+        return matches[1]
+    }
+    return ""
 }

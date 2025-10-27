@@ -2,11 +2,11 @@ package script
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
+	"regexp"
 	"scripter/internal/mainconfig"
 	"scripter/internal/utils"
 	"strings"
@@ -27,7 +27,7 @@ func (script Script) ExecuteSrcipt(mainCfg *mainconfig.MainConfig, destination s
 
 	namePath := destination + "/" + name
 
-	os.Mkdir(name, 0755)
+	os.Mkdir(namePath, 0755)
 	cmd := exec.Command("go", "mod", "init", name)
 	cmd.Dir = namePath
 	_, err := cmd.CombinedOutput()
@@ -36,10 +36,19 @@ func (script Script) ExecuteSrcipt(mainCfg *mainconfig.MainConfig, destination s
 		return err
 	}
 
+    re := regexp.MustCompile(`module declares its path as:\s*([\w./-]+)`)
 	for _, pack := range packages {
-		err := getPackage(pack, name)
+		err := getPackage(pack, name, re)
 		if err != nil {
-			return err
+			fmt.Printf("Failed to get package: %v\n", err)
+			fmt.Print("Want to resume downloading other packages, or retry? [1/2]: ")
+			var ans int
+			fmt.Scanln(&ans)
+			if ans == 2 {
+				return err
+			} else {
+				continue
+			}
 		}
 	}
 
@@ -60,6 +69,41 @@ func (script Script) ExecuteSrcipt(mainCfg *mainconfig.MainConfig, destination s
 	}
 
 	return nil
+}
+
+func getPackage(packName, dirName string, re *regexp.Regexp) error {
+	fullName, err := CheckPackage(packName)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Installing: ", fullName)
+	err = installPackage(fullName, dirName, re)
+	return err
+}
+
+func installPackage(packName string, dirName string, re *regexp.Regexp) error {
+	result, err := commandInstallPackage(packName, dirName)
+	if err != nil {
+		newPackName := GetPackageNameFromErrOutput(string(result), re)
+		if newPackName == "" {
+			fmt.Println("go get failed:", err)
+			return err
+		} else {
+			res, err := commandInstallPackage(newPackName, dirName)
+			fmt.Println(res)
+			return err
+		}
+	}
+
+	return nil
+}
+
+func commandInstallPackage(name, dirName string) (string, error) {
+	packCmd := exec.Command("go", "get", "-u", name)
+	packCmd.Dir = dirName
+	output, err := packCmd.CombinedOutput()
+	return string(output), err
 }
 
 func askName(isAsked bool) string {
@@ -98,26 +142,3 @@ func askPackages(isAsked bool) []string {
 	return packages
 }
 
-func getPackage(pack string, name string) error {
-	fullName, err := CheckPackage(pack)
-	if err != nil {
-		fmt.Printf("Failed to check package: %v\n", err)
-		fmt.Print("Want to resume downloading other packages, or retry? [1/2]: ")
-		var ans int
-		fmt.Scanln(&ans)
-		if ans == 2 {
-			return errors.New("Break")
-		} 
-	}
-
-	fmt.Println("Installing: ", fullName)
-	packCmd := exec.Command("go", "get", "-u", fullName)
-	packCmd.Dir = name
-	output, err := packCmd.CombinedOutput()
-	if err != nil {
-		return err
-	}
-	
-	fmt.Println(string(output))
-	return nil
-}
