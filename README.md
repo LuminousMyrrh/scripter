@@ -1,44 +1,56 @@
 # Scripter
-A simple CLI tool for those who want to easily setup their microservices!
-Scripter allows you to define and save project templates and use them later.
-With *script.json* in your working directory you can define scripts which are uses your templates.
-Work only in Linux!
+
+![Platform: Linux](https://img.shields.io/badge/platform-linux-lightgrey)
+
+A simple Linux CLI for fast microservice setup with user-defined project templates. Scripter saves development time by letting you reuse scaffolding and automate environment initialization—perfect for microservice developers looking to standardize workflows.
+
+## Table of Contents
+- [How it works](#how-it-works)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Features](#features)
+- [Roadmap](#roadmap)
+- [License](#license)
 
 ## How it works
-You can add new template by using `make` and providing a template name.
-Then in directory where you want to use your template create `scripts.json` (example in repo)
-and use `run` with provided script name from `scripts.json`
 
-## Examples
-1. Create new template - `scripter make authentication`
-    - Copies current directory to a `.config/scripter/templates/authentication`
-2. Use script from `scripts.json` by `scripter run auth`
-    - Copies templates to current directory
-
-## Features 
-- Lightweight (no dependencies at all)
-- Fast
-- Saves your templates in `.config/scripter` directory
+Define and save templates from any directory with `scripter make <templateName>`.  
+In your project folder, create a `scripts.json` file (see `examples/scripts.json`) and run predefined scripts using `scripter run <scriptName>`.
 
 ## Installation
-- Clone this repo:
+
 ```
 git clone https://github.com/LuminousMyrrh/scripter.git
 cd scripter
-```
-- Bulid with make:
-```
 make
-```
-- Run:
-```
 ./dist/main
 ```
+*Linux only.* 
+
+## Usage
+
+- Create a template:
+```
+scripter make authentication
+```
+Copies the current folder to `~/.config/scripter/templates/authentication`.
+
+- Run from scripts.json:
+```
+scripter run auth
+```
+Copies the template files into the current directory.
+
+## Features
+- Lightweight, fast CLI
+- No dependencies
+- Templates saved to `~/.config/scripter`
 
 ## Roadmap
-| Version   | Features     |
-| --------- |:------------:|
-|    0.1    | basic impl   |
-|    0.2    | 'run' command|
-|    0.3    | 'make' command|
-|    0.4    | 'rm' command|
+
+| Version | Features         |
+| ------- | ----------------|
+| 0.1     | Basic impl      |
+| 0.2     | `run` command   |
+| 0.3     | `make` command  |
+| 0.4     | `rm` command    |
