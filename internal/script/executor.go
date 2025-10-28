@@ -1,9 +1,7 @@
 package script
 
 import (
-	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"regexp"
@@ -12,18 +10,10 @@ import (
 	"strings"
 )
 
-type Script struct {
-	Name     string
-	Template string
-	Ask      struct {
-		PName     bool `json:"name"`
-		PPackages bool `json:"packages"`
-	}
-}
-
 func (script Script) ExecuteSrcipt(mainCfg *mainconfig.MainConfig, destination string) error {
 	name := askName(script.Ask.PName)
 	packages := askPackages(script.Ask.PPackages)
+	packages = append(packages, script.InstallPackages...)
 
 	namePath := destination + "/" + name
 
@@ -104,41 +94,5 @@ func commandInstallPackage(name, dirName string) (string, error) {
 	packCmd.Dir = dirName
 	output, err := packCmd.CombinedOutput()
 	return string(output), err
-}
-
-func askName(isAsked bool) string {
-	var name string
-
-	if isAsked {
-		for {
-			fmt.Print("Enter project name: ")
-			fmt.Scan(&name)
-			if e, err := utils.IsDirExist(name); err != nil {
-				log.Fatal("Failed to check dir: ", err)
-				break
-			} else if e {
-				fmt.Printf("Directory %s already exist\n", name)
-				continue
-			}
-			break
-		}
-	}
-
-	return name
-}
-
-func askPackages(isAsked bool) []string {
-	var packages []string
-
-	if isAsked {
-		scanner := bufio.NewScanner(os.Stdin)
-		fmt.Println(
-			"Enter packages names you want to preinstall (enter when done):")
-		if scanner.Scan() {
-			packs := scanner.Text()
-			packages = strings.Fields(packs)
-		}
-	}
-	return packages
 }
 
