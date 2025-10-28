@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func (script Script) ExecuteSrcipt(mainCfg *mainconfig.MainConfig, destination string) error {
+func (script Script) ExecuteScript(mainCfg *mainconfig.MainConfig, destination string) error {
 	name := askName(script.Ask.PName)
 	packages := askPackages(script.Ask.PPackages)
 	packages = append(packages, script.InstallPackages...)

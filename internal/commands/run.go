@@ -10,7 +10,7 @@ import (
 
 func CommandRun(args []string, config *config.Config,
 	mainConfig *mainconfig.MainConfig) error {
-	if len(args) != 2 {
+	if len(args) < 2 {
 		return errors.New("Expected script name after run")
 	}
 
@@ -32,7 +32,7 @@ func CommandRun(args []string, config *config.Config,
 		secArg = args[2]
 	}
 
-	err := src.ExecuteSrcipt(mainConfig, secArg)
+	err := src.ExecuteScript(mainConfig, secArg)
 	if err != nil {
 		return err
 	}
