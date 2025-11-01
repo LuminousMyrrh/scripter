@@ -23,7 +23,7 @@ In your project folder, create a `scripts.json` file (see `examples/scripts.json
 git clone https://github.com/LuminousMyrrh/scripter.git
 cd scripter
 make
-./dist/main
+./dist/scripter
 ```
 *Linux only.* 
 
