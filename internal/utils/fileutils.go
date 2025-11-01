@@ -86,4 +86,3 @@ func CopyTemplate(template string, dest string) error {
 	}
 	return nil
 }
-

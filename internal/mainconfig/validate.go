@@ -37,7 +37,8 @@ func InitMainConfigPath(xdgConfigDir string) {
 	os.Create(configPath + "config.json")
 }
 
-func (mc *MainConfig) validateTemplates(templates []string, templateDir string) error {
+
+func (mc *MainConfig) ValidateNewTemplates(templates []string, templateDir string) error {
 	for _, temp := range templates {
 		fullDirTemp := templateDir + temp
 		if exist, err := utils.IsDirExist(fullDirTemp); err != nil {
@@ -50,3 +51,15 @@ func (mc *MainConfig) validateTemplates(templates []string, templateDir string) 
 	return nil
 }
 
+func (mc *MainConfig) ValidateExistingTemplates() error {
+
+	for i, temp := range mc.Templates {
+		if exist, err := utils.IsDirExist(temp); err != nil {
+			return err
+		} else if !exist {
+			mc.Templates = append(mc.Templates[:i], mc.Templates[i+1:]...)
+		}
+	}
+
+	return nil
+}

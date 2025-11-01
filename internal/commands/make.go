@@ -1,12 +1,10 @@
 package commands
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"scripter/internal/mainconfig"
 	"scripter/internal/utils"
-	"strings"
 )
 
 func CommandMake(args []string, mainConfig *mainconfig.MainConfig) error {
@@ -34,18 +32,13 @@ func CommandMake(args []string, mainConfig *mainconfig.MainConfig) error {
 	}
 
 	mainConfig.AddTemplate(tempName)
-	perpareTemps(mainConfig)
+	utils.PerpareTemps(mainConfig.Templates)
+
+	err = mainConfig.UpdateConfigFile()
+	if err != nil {
+		return err
+	}
 	
-	updatedTemps, err := json.MarshalIndent(mainConfig, "", " ")
-	if err != nil {
-		return err
-	}
-
-	err = os.WriteFile(mainConfig.ConfigPath + "config.json", updatedTemps, 0644)
-	if err != nil {
-		return err
-	}
-
 	fmt.Println("Added new template: ", tempName)
 
 	return nil
@@ -90,11 +83,4 @@ func askTemplateName(cfgDir string) (string, error) {
 	}
 
 	return name, nil
-}
-
-func perpareTemps(mainConfig *mainconfig.MainConfig) {
-	for i, temp := range mainConfig.Templates {
-		parts := strings.Split(temp, "/")
-		mainConfig.Templates[i] = parts[len(parts)-1]
-	}
 }

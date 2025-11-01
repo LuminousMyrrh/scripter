@@ -33,11 +33,27 @@ func (mainCfg *MainConfig) readMainConfig(configFile string, xdgConfigDir string
 	templateDir := xdgConfigDir + "/scripter" + "/templates/"
 	
 	//validate templates
-	mainCfg.validateTemplates(templates.Templates, templateDir)
+	if err := mainCfg.ValidateNewTemplates(templates.Templates, templateDir); err != nil {
+		return err
+	}
 
 	return nil
 }
 
 func (m *MainConfig) AddTemplate(tempName string) {
 	m.Templates = append(m.Templates, tempName)
+}
+
+func (mc *MainConfig) UpdateConfigFile() error {
+	updatedTemps, err := json.MarshalIndent(mc, "", " ")
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(mc.ConfigPath + "config.json", updatedTemps, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

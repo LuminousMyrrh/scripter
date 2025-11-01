@@ -10,7 +10,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("usage: scripter run <your command>")
+		fmt.Println("usage: scripter <cmd>")
 		os.Exit(1)
 	}
 
@@ -47,6 +47,11 @@ func main() {
 	case "init":
 		if err := commands.CommandInit(mainConfig); err != nil {
 			fmt.Println("Failed to run 'init':", err)
+			os.Exit(1)
+		}
+	case "del":
+		if err := commands.CommandDel(args, mainConfig); err != nil {
+			fmt.Println("Failed to run 'del':", err)
 			os.Exit(1)
 		}
 	default:
