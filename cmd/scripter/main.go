@@ -54,6 +54,11 @@ func main() {
 			fmt.Println("Failed to run 'del':", err)
 			os.Exit(1)
 		}
+	case "list":
+		if err := commands.CommandList(mainConfig); err != nil {
+			fmt.Println("Failed to run 'list':", err)
+			os.Exit(1)
+		}
 	default:
 		fmt.Printf("Unknown command: %s\n", args[0])
 		fmt.Println("usage: scripter run <your command>")

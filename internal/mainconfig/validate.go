@@ -52,7 +52,6 @@ func (mc *MainConfig) ValidateNewTemplates(templates []string, templateDir strin
 }
 
 func (mc *MainConfig) ValidateExistingTemplates() error {
-
 	for i, temp := range mc.Templates {
 		if exist, err := utils.IsDirExist(temp); err != nil {
 			return err
