@@ -8,6 +8,17 @@ import (
 	"scripter/internal/mainconfig"
 )
 
+func printHelp() {
+	fmt.Println("Usage: scripter <command> [options]")
+	fmt.Println("Commands:")
+	fmt.Println("  run    - Run a script defined in scripts.json")
+	fmt.Println("  make   - Make new template")
+	fmt.Println("  init   - Initialize current folder")
+	fmt.Println("  del    - Delete template")
+	fmt.Println("  list   - List available templates")
+	fmt.Println("  -h, --help - Show this help message")
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("usage: scripter <cmd>")
@@ -15,6 +26,11 @@ func main() {
 	}
 
 	args := os.Args[1:]
+
+	if args[0] == "-h" || args[0] == "--help" {
+		printHelp()
+		return
+	}
 
 	mainConfig := mainconfig.NewMainConfig()
 	if err := mainConfig.CheckMainConfig(); err != nil {
@@ -61,7 +77,7 @@ func main() {
 		}
 	default:
 		fmt.Printf("Unknown command: %s\n", args[0])
-		fmt.Println("usage: scripter run <your command>")
+		printHelp()
 		os.Exit(1)
 	}
 }
