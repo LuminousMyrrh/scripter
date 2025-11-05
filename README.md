@@ -29,6 +29,8 @@ make
 
 ## Usage
 
+- Use `-h/--help flag` for list of commands and their description
+
 - Create a template:
 ```
 scripter make authentication
